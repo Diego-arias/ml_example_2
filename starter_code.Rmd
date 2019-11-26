@@ -141,6 +141,7 @@ metrics(x_2, truth = dvote, estimate = pred_dvote) %>%
 ```
 
 ```{r}
+set.seed(10)
 train_test_split <-
   initial_split(data = clean, prop = 0.01) 
 
@@ -151,10 +152,19 @@ test_tbl  <- train_test_split %>% testing()
   yert2 <- logistic_reg(mode = "classification") %>% 
     set_engine("glm") %>%
     fit(dvote ~ gender + party + state + office, data = train_tbl) %>%
+  predict(new_data = train_tbl) %>% bind_cols(train_tbl %>% select(dvote)) %>%
+  metrics(truth = dvote, estimate = .pred_class) %>%
+  gt() 
+  
+  yert3 <- logistic_reg(mode = "classification") %>% 
+    set_engine("glm") %>%
+    fit(dvote ~ gender + party + state + office, data = train_tbl) %>%
   predict(new_data = test_tbl) %>% bind_cols(test_tbl %>% select(dvote)) %>%
   metrics(truth = dvote, estimate = .pred_class) %>%
   gt() 
   
+  yert2
+  yert3
 
 
 ```
